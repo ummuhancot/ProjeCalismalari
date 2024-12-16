@@ -1,0 +1,53 @@
+
+Kullanıcı Yönetim Sistemi Taskı (SQL Tabanlı)
+Amaç:
+Kullanıcı bilgilerini bir SQL veritabanında saklamak, görüntülemek, güncellemek ve silmek için bir sistem geliştirin.
+Gereksinimler:
+SQL Veritabanı Yapısı:
+Bir SQL veritabanı oluşturulacak ve aşağıdaki yapıda bir tablo kullanılacak:
+id: Benzersiz kullanıcı kimliği (PRIMARY KEY, VARCHAR).
+ad: Kullanıcı adı (VARCHAR, NULL olamaz).
+email: Kullanıcı e-posta adresi (VARCHAR, NULL olamaz, UNIQUE).
+rol: Kullanıcı rolü (Enum ile eşleşen bir alan).
+Enum ile Rol Tanımları:
+
+Roller bir Enum yapısı ile tanımlanacak:
+ADMIN
+MODERATOR
+KULLANICI
+
+SQL İşlemleri:
+Kullanıcı Ekleme:Kullanıcıdan ID, ad, e-posta ve rol bilgisi alınacak.
+Kullanıcı bilgileri bir SQL INSERT sorgusu ile tabloya eklenecek.
+Eğer id veya email zaten varsa uygun hata mesajı gösterilecek.
+Kullanıcı Listeleme:SQL SELECT sorgusu kullanılarak tüm kullanıcı bilgileri görüntülenecek.
+Tablodan çekilen veriler konsolda listelenecek.
+Kullanıcı Güncelleme:Belirli bir id ile eşleşen kullanıcıyı bulmak için SELECT sorgusu çalıştırılacak.
+Ad, e-posta veya rol güncellemesi bir UPDATE sorgusu ile yapılacak.
+Kullanıcı Silme:Belirli bir id ile eşleşen kullanıcı bir DELETE sorgusu ile silinecek.
+Hata Yönetimi:SQL sorgularında ve JDBC bağlantılarında hata oluştuğunda uygun hata mesajları gösterilecek.
+
+Konsol Menüsü:
+Kullanıcıya aşağıdaki işlemleri yapabileceği bir menü sunulacak:
+Yeni Kullanıcı Ekle
+Kullanıcıları Listele
+Kullanıcı Bilgilerini Güncelle
+Kullanıcıyı Sil
+Çıkış Yap
+
+Program Akışı:
+Kullanıcıdan alınan girişe göre SQL işlemleri yapılacak.
+Geçersiz seçimlerde kullanıcı bilgilendirilecek.
+"Çıkış" seçeneği seçildiğinde program sonlandırılacak.
+Teknik Detaylar:
+Bağlantı Yönetimi:JDBC kullanılarak SQL bağlantısı kurulacak.
+Bağlantı doğru şekilde açılacak ve işlemler tamamlandığında kapatılacak.
+SQL Sorgularında Güvenlik:SQL enjeksiyonuna karşı PreparedStatement kullanılacak.
+Güncellenebilirlik:Veritabanı işlemleri modüler bir şekilde tasarlanarak gerektiğinde genişletilebilir olacak.
+
+Ek Özellikler:
+Veri Doğrulama:
+
+Kullanıcıdan alınan veriler (örneğin, email formatı veya rol değeri) uygun şekilde doğrulanacak.
+Temiz Kod Standartları:
+Kod okunabilir, modüler ve hataya dayanıklı olacak.*/
