@@ -12,4 +12,6 @@ public interface Repository<S, U> {
     void update(S entity);
 
     void deleteById(U id);
+
+    S findById(U id);
 }

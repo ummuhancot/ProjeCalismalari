@@ -5,7 +5,7 @@ public class User {
     private Integer id;
     private String name;
     private String email;
-    Role role;
+    private Role role;
 
     public User(String name, String email, Role role) {
         this.name = name;
@@ -48,13 +48,4 @@ public class User {
     //toString
 
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }

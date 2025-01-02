@@ -14,7 +14,6 @@ public class JdbcUtils {
                 SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static void setStatement() {

@@ -19,8 +19,10 @@ public class Runner {
 		Kullanıcıyı Sil
 		Çıkış Yap*/
 
+        UserService userService = new UserService();
+        userService.createUserTable();
         int select;
-
+        int id;
 
         do
         {
@@ -29,21 +31,30 @@ public class Runner {
             System.out.println("2-Kullanicilari Listele");
             System.out.println("3-Kullanici Bilgilerini Güncelle");
             System.out.println("4-Kullaniciyi Sil");
+            System.out.println("5-Kullancinın Rapora yazdırma ");
             System.out.println("0-Cikis");
             select = input.nextInt();
             input.nextLine();
 
             switch (select) {
                 case 1:
+                    userService.saveUser();
                     break;
                 case 2:
+                    userService.listAllUser();
                     break;
                 case 3:
+                    id=getIdInfo();
+                    userService.updateUserBy(id);
                     break;
                 case 4:
+                    id=getIdInfo();
+                    userService.deleteUserById(id);
+                    break;
+                case 5:
+                    userService.generateReport();
                     break;
                 case 0:
-                    break;
                 default:
                     break;
 
@@ -54,7 +65,12 @@ public class Runner {
 
     }
 
-
+    private static int getIdInfo(){
+        System.out.println("Id : ");
+        int id = input.nextInt();
+        input.nextLine();
+        return id;
+    }
 
 
 }

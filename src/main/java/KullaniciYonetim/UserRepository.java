@@ -13,10 +13,7 @@ public class UserRepository implements Repository<User, Integer> {
         try {
             JdbcUtils.setConnection();
             JdbcUtils.setStatement();
-
-
-            JdbcUtils.st.execute("CREATE TABLE IF NOT EXISTS t_user (" + "id INT IDENTITY PRIMARY KEY,\n " + "name NVARCHAR(50) NOT NULL CHECK(LEN(name) > 0),\n " + "email NVARCHAR(255) NOT NULL CHECK(LEN(email) > 0),\n " + "role NVARCHAR(20) NOT NULL CHECK(role IN ('ADMIN', 'MODERATOR', 'KULLANICI') )");
-
+            JdbcUtils.st.execute("CREATE TABLE IF NOT EXISTS t_user (\n" + "id SERIAL PRIMARY KEY,\n" + "name VARCHAR(50) NOT NULL CHECK(LENGTH(name)>0),\n" + "email VARCHAR(255) NOT NULL UNIQUE CHECK(LENGTH(email)>0),\n" + "role VARCHAR(20) NOT NULL CHECK(role IN ('ADMIN', 'MODERATOR', 'KULLANICI'))\n" + ")");
             System.out.println("Table created successfully!");
 
         } catch (
@@ -27,6 +24,7 @@ public class UserRepository implements Repository<User, Integer> {
         }
     }
 
+
     @Override
     public void save(User user) {
         JdbcUtils.setConnection();
@@ -34,7 +32,7 @@ public class UserRepository implements Repository<User, Integer> {
         try {
             JdbcUtils.preparedStatement.setString(1, user.getName());
             JdbcUtils.preparedStatement.setString(2, user.getEmail());
-            JdbcUtils.preparedStatement.setString(3, String.valueOf(user.getRole()));
+            JdbcUtils.preparedStatement.setString(3, user.getRole().getRole());
             JdbcUtils.preparedStatement.executeUpdate();
             System.out.println("Kullanici basariyla kaydedildi.");
         } catch (
@@ -57,6 +55,7 @@ public class UserRepository implements Repository<User, Integer> {
                 String role = userResult.getString("role");
                 Role roleEnum = Role.valueOf(role.toUpperCase());
                 User user = new User(userResult.getString("name"), userResult.getString("email"), roleEnum);
+                user.setId(userResult.getInt("id"));
                 users.add(user);
             }
         } catch (
@@ -69,15 +68,77 @@ public class UserRepository implements Repository<User, Integer> {
     }
 
     @Override
-    public void update(User entity) {
-
-
+    public void update(User user) {
+        JdbcUtils.setConnection();
+        JdbcUtils.setPreparedStatement("UPDATE t_user SET name = ?, email = ?, role = ? WHERE id = ? ");
+        try {
+            JdbcUtils.preparedStatement.setString(1, user.getName());
+            JdbcUtils.preparedStatement.setString(2, user.getEmail());
+            JdbcUtils.preparedStatement.setString(3, user.getRole().getRole());
+            JdbcUtils.preparedStatement.setInt(4, user.getId());
+            int updated = JdbcUtils.preparedStatement.executeUpdate();
+            if (updated > 0) {
+                System.out.println("Kullanici basariyla güncellendi.");
+            }
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            JdbcUtils.closePreparedStatement();
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
-
+        JdbcUtils.setConnection();
+        JdbcUtils.setStatement();
+        try {
+            int deleted = JdbcUtils.st.executeUpdate("DELETE FROM t_user WHERE id = " + id);
+            if (deleted > 0) {
+                System.out.println("Silme islemi basariyla tamamlandi silinen id " + id);
+            } else {
+                System.out.println("Silme islemi basarisiz. Verilen id ile kullanici bulunamadi");
+            }
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            JdbcUtils.closeStatement();
+        }
     }
 
+    @Override
+    public User findById(Integer id) {
+        User user = null;
+        JdbcUtils.setConnection();
+        JdbcUtils.setPreparedStatement("SELECT * FROM t_user WHERE id=?");
+        try {
+            JdbcUtils.preparedStatement.setInt(1, id);
+            ResultSet rs = JdbcUtils.preparedStatement.executeQuery();
 
+            if (rs.next()) {
+                // role String olarak alınır ve Role enum değerine dönüştürülür
+                String roleString = rs.getString("role");
+                Role roleEnum;
+
+                try {
+                    roleEnum = Role.valueOf(roleString.toUpperCase());
+                } catch (
+                        IllegalArgumentException e) {
+                    throw new RuntimeException("Role enum conversion failed: " + roleString, e);
+                }
+
+                // User nesnesi oluşturulur
+                user = new User(rs.getString("name"), rs.getString("email"), roleEnum);
+                user.setId(rs.getInt("id"));
+            }
+        } catch (
+                SQLException e) {
+            throw new RuntimeException("Database operation failed", e);
+        } finally {
+            JdbcUtils.closePreparedStatement();
+        }
+
+        return user;
+    }
 }
